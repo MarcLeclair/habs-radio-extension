@@ -1,0 +1,78 @@
+#hrs-panel {
+  --red: #af1e2d; --red-hover: #c8253a; --bg: #0a0a0a; --surface: #1a1a1a;
+  --hover: #222; --border: #2a2a2a; --muted: #888; --soft: #aaa;
+  position: fixed; right: 20px; bottom: 20px; z-index: 2147483647; width: 280px;
+  color: #fff; background: var(--bg); border: 1px solid var(--red); border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; user-select: none;
+}
+
+#hrs-panel.collapsed { width: auto; }
+#hrs-panel.collapsed .hrs-body { display: none; }
+#hrs-panel.collapsed .hrs-header { border-radius: 11px; }
+
+.hrs-header, .hrs-controls, .hrs-nudge, .hrs-station, .hrs-sync-label { display: flex; }
+.hrs-header, .hrs-controls, .hrs-station { align-items: center; }
+.hrs-header, .hrs-station, .hrs-sync-label { justify-content: space-between; }
+.hrs-stations, .hrs-sync { display: flex; flex-direction: column; }
+.hrs-title, .hrs-station-name, .hrs-play { font-weight: 600; }
+
+.hrs-header {
+  padding: 10px 12px; background: var(--red); border-radius: 11px 11px 0 0; cursor: move;
+}
+
+.hrs-body { padding: 12px; }
+.hrs-stations { gap: 6px; margin-bottom: 12px; }
+.hrs-controls { gap: 8px; margin-bottom: 12px; }
+.hrs-sync { gap: 4px; }
+.hrs-nudge { gap: 6px; margin-top: 6px; }
+
+.hrs-collapse, .hrs-play, .hrs-reload, .hrs-nudge button { color: #fff; cursor: pointer; }
+.hrs-station, .hrs-reload, .hrs-nudge button, .hrs-mute-tip { background: var(--surface); }
+.hrs-station, .hrs-reload, .hrs-nudge button { border: 1px solid var(--border); border-radius: 6px; }
+.hrs-station:hover, .hrs-reload:hover, .hrs-nudge button:hover { background: var(--hover); }
+.hrs-station-tag, .hrs-sync-label, .hrs-buffer-label, .hrs-status, .hrs-mute-tip { font-size: 11px; }
+.hrs-station-tag, .hrs-buffer-label, .hrs-status { color: var(--muted); }
+.hrs-play, .hrs-reload, .hrs-nudge button { padding: 8px; }
+
+.hrs-collapse {
+  padding: 0 4px; background: transparent; border: 0; font-size: 16px;
+}
+
+.hrs-station {
+  padding: 8px 10px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
+}
+
+.hrs-station.active { background: #1f0a0c; border-color: var(--red); }
+
+.hrs-play {
+  flex: 1; background: var(--red); border: 0; border-radius: 6px;
+}
+
+.hrs-play:hover { background: var(--red-hover); }
+.hrs-play:disabled, .hrs-reload:disabled { opacity: 0.5; cursor: not-allowed; }
+.hrs-reload { width: 36px; font-size: 14px; }
+
+.hrs-sync-label { color: var(--soft); }
+.hrs-sync-value { color: #fff; }
+.hrs-sync-value, .hrs-buffer-label { font-variant-numeric: tabular-nums; }
+.hrs-sync input[type="range"] { width: 100%; accent-color: var(--red); }
+
+.hrs-buffer { margin-top: 8px; }
+.hrs-buffer-bar {
+  position: relative; height: 6px; background: var(--surface); border-radius: 3px; overflow: hidden;
+}
+
+.hrs-buffer-fill, .hrs-buffer-played {
+  position: absolute; inset: 0 auto 0 0; width: 0;
+}
+
+.hrs-buffer-fill { background: #2a5a8a; transition: width 0.3s linear; }
+.hrs-buffer-played { background: var(--red); transition: width 0.2s linear; }
+.hrs-buffer-label { margin-top: 4px; }
+
+.hrs-nudge button { flex: 1; padding: 6px; font-size: 12px; }
+.hrs-status { min-height: 14px; margin-top: 10px; text-align: center; }
+.hrs-mute-tip {
+  margin-top: 8px; padding: 8px; border-radius: 6px; color: var(--soft); line-height: 1.4;
+}

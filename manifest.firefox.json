@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "Habs Radio Sync",
+  "version": "0.1.0",
+  "description": "Listen to French radio commentary in sync with your Canadiens stream.",
+  "icons": {
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_title": "Habs Radio Sync",
+    "default_popup": "src/popup.html",
+    "default_icon": {
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "background": {
+    "scripts": ["src/host-utils.js", "src/background.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.sportsnet.ca/*",
+        "https://*.rds.ca/*",
+        "https://*.tvasports.ca/*"
+      ],
+      "js": ["src/stations.js", "src/content.js"],
+      "css": ["src/panel.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": ["storage", "scripting", "activeTab"],
+  "optional_host_permissions": ["https://*/*"],
+  "host_permissions": [
+    "https://*.streamtheworld.com/*"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/audio-host.html"],
+      "matches": ["https://*/*"]
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "habs-radio-sync@mleclair.local",
+      "data_collection_permissions": {
+        "required": ["none"]
+      },
+      "strict_min_version": "142.0"
+    }
+  }
+}
