@@ -6,25 +6,23 @@
 </head>
 <body>
   <div class="hdr">
-    <span class="title">🏒 Habs Radio Sync</span>
+    <span class="title" data-i18n="panelTitle"></span>
   </div>
 
   <section class="current">
-    <div class="label">Current site</div>
+    <div class="label" data-i18n="popupCurrentSite"></div>
     <div class="host" id="current-host">—</div>
     <button id="current-action" disabled>—</button>
     <div class="hint" id="current-hint"></div>
   </section>
 
   <section class="list">
-    <div class="label">Enabled sites</div>
+    <div class="label" data-i18n="popupEnabledSites"></div>
     <ul id="domain-list"></ul>
-    <div class="empty" id="empty-msg" hidden>No extra sites enabled yet.</div>
+    <div class="empty" id="empty-msg" data-i18n="popupEmptyList" hidden></div>
   </section>
 
-  <div class="footnote">
-    Built-in sites (Sportsnet, RDS, TVA Sports) are always enabled.
-  </div>
+  <div class="footnote" data-i18n="popupFootnote"></div>
 
   <script src="host-utils.js"></script>
   <script src="popup.js"></script>

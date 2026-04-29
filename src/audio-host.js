@@ -156,13 +156,19 @@ function attachWorkletHeartbeats() {
   };
 }
 
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 8;
 function connectPort() {
   port = api.runtime.connect({ name: "hrs-audio" });
   port.onDisconnect.addListener(() => {
     port = null;
-    setTimeout(connectPort, 500);
+    if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) return;
+    const delay = Math.min(500 * Math.pow(2, reconnectAttempts), 30000);
+    reconnectAttempts++;
+    setTimeout(connectPort, delay);
   });
   port.onMessage.addListener(async (msg) => {
+    reconnectAttempts = 0;
     if (!msg || !msg.type) return;
     const id = msg.id;
     const reply = (payload) => sendPort({ type: "hrs:audio-reply", id, ...payload });

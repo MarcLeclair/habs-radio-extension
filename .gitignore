@@ -1,5 +1,7 @@
 # Web extension build artifacts
 web-ext-artifacts/
+dist/
+manifest.json
 *.zip
 *.xpi
 *.crx

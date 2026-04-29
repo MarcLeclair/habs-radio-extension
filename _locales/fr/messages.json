@@ -1,0 +1,132 @@
+{
+  "extensionName": {
+    "message": "Habs Radio Sync",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "Écoutez la description radio synchronisée avec votre diffusion sportive."
+  },
+  "panelTitle": {
+    "message": "🏒 Habs Radio Sync"
+  },
+  "panelCollapseTitle": {
+    "message": "Réduire"
+  },
+  "panelPlay": {
+    "message": "▶ Jouer"
+  },
+  "panelPause": {
+    "message": "⏸ Pause"
+  },
+  "panelReloadTitle": {
+    "message": "Redémarrer la connexion et vider le délai"
+  },
+  "panelSyncDelay": {
+    "message": "Délai de synchronisation"
+  },
+  "panelBufferLabel": {
+    "message": "Délai : $SECONDS$ s / 60 s",
+    "placeholders": {
+      "seconds": { "content": "$1" }
+    }
+  },
+  "panelBufferFilling": {
+    "message": ", remplissage jusqu'à $SECONDS$ s…",
+    "placeholders": {
+      "seconds": { "content": "$1" }
+    }
+  },
+  "panelMuteTip": {
+    "message": "Quand vous appuyez sur Jouer, le son des vidéos sur la page sera automatiquement coupé. Si vous l'entendez encore, coupez le son manuellement avec les contrôles de la vidéo. Si vous coupez le son de l'onglet, cela coupera aussi la radio."
+  },
+  "panelMuteTipChrome": {
+    "message": "Quand vous appuyez sur Jouer, le son des vidéos sur la page sera automatiquement coupé. Si vous l'entendez encore, coupez le son manuellement avec les contrôles de la vidéo."
+  },
+  "statusConnecting": {
+    "message": "Connexion…"
+  },
+  "statusPlaying": {
+    "message": "Lecture de $STATION$",
+    "placeholders": {
+      "station": { "content": "$1" }
+    }
+  },
+  "statusPaused": {
+    "message": "En pause"
+  },
+  "statusFailedToPlay": {
+    "message": "Échec de la lecture"
+  },
+  "statusReloading": {
+    "message": "Redémarrage de la connexion…"
+  },
+  "statusReloadFailed": {
+    "message": "Échec du rechargement"
+  },
+  "statusInvalidated": {
+    "message": "L'extension a été mise à jour. Veuillez recharger cette page."
+  },
+  "popupCurrentSite": {
+    "message": "Site actuel"
+  },
+  "popupNotAWebpage": {
+    "message": "(pas une page web)"
+  },
+  "popupUnavailable": {
+    "message": "Indisponible"
+  },
+  "popupHintNotAWebpage": {
+    "message": "Ouvrez une page de diffusion sportive, puis cliquez sur l'icône de l'extension pour l'activer ici."
+  },
+  "popupActionAlwaysEnabled": {
+    "message": "✓ Toujours activé"
+  },
+  "popupHintBuiltin": {
+    "message": "Ce site est intégré. Le panneau radio apparaît automatiquement."
+  },
+  "popupActionRemove": {
+    "message": "Retirer ce site"
+  },
+  "popupHintEnabled": {
+    "message": "Le panneau radio est activé ici. Rechargez la page après l'avoir retiré."
+  },
+  "popupActionAdd": {
+    "message": "Ajouter $HOST$",
+    "placeholders": {
+      "host": { "content": "$1" }
+    }
+  },
+  "popupHintAdd": {
+    "message": "Ajoute la permission pour ce nom d'hôte exact uniquement. Rechargez la page après l'activation."
+  },
+  "popupPermissionFailed": {
+    "message": "Échec de la demande de permission : $REASON$",
+    "placeholders": {
+      "reason": { "content": "$1" }
+    }
+  },
+  "popupPermissionDenied": {
+    "message": "La permission n'a pas été accordée."
+  },
+  "popupRegistering": {
+    "message": "Enregistrement…"
+  },
+  "popupRegisterFailed": {
+    "message": "Échec de l'enregistrement du script de contenu."
+  },
+  "popupEnabledSites": {
+    "message": "Sites activés"
+  },
+  "popupBuiltinTag": {
+    "message": "intégré"
+  },
+  "popupRemoveButton": {
+    "message": "Retirer"
+  },
+  "popupEmptyList": {
+    "message": "Aucun site supplémentaire activé."
+  },
+  "popupFootnote": {
+    "message": "Les sites intégrés (Sportsnet, RDS, TVA Sports) sont toujours activés."
+  }
+}

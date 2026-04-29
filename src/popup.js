@@ -1,32 +1,14 @@
 const api = (typeof browser !== "undefined") ? browser : chrome;
-const USE_PROMISE_APIS = typeof browser !== "undefined" && api === browser;
+const t = (key, ...subs) => api.i18n.getMessage(key, subs.length ? subs : undefined);
 
 const BUILTIN_HOSTS = ["sportsnet.ca", "rds.ca", "tvasports.ca"];
 
 const isValidHost = self.hrsIsValidHost;
 const originPatterns = self.hrsOriginPatterns;
 
-const send = (msg) => USE_PROMISE_APIS
-  ? api.runtime.sendMessage(msg)
-  : new Promise((resolve) => api.runtime.sendMessage(msg, resolve));
-const queryActiveTab = () => USE_PROMISE_APIS
-  ? api.tabs.query({ active: true, currentWindow: true })
-  : new Promise((resolve) => api.tabs.query({ active: true, currentWindow: true }, resolve));
-
-function requestOrigins(origins) {
-  if (USE_PROMISE_APIS) return api.permissions.request({ origins });
-  return new Promise((resolve, reject) => {
-    try {
-      const p = api.permissions.request({ origins }, (granted) => {
-        if (api.runtime.lastError) reject(api.runtime.lastError);
-        else resolve(granted);
-      });
-      if (p && typeof p.then === "function") p.then(resolve, reject);
-    } catch (e) {
-      reject(e);
-    }
-  });
-}
+const send = (msg) => api.runtime.sendMessage(msg);
+const queryActiveTab = () => api.tabs.query({ active: true, currentWindow: true });
+const requestOrigins = (origins) => api.permissions.request({ origins });
 
 function getCurrentTabHost() {
   return queryActiveTab().then((tabs) => {
@@ -75,48 +57,48 @@ async function render() {
   const { domains } = (await send({ type: "hrs:listDomains" })) || { domains: [] };
 
   if (!current) {
-    hostEl.textContent = "(not a webpage)";
-    configureAction(actionEl, "Unavailable", true, false);
-    hintEl.textContent = "Open a sports streaming page, then click the extension icon to enable it there.";
+    hostEl.textContent = t("popupNotAWebpage");
+    configureAction(actionEl, t("popupUnavailable"), true, false);
+    hintEl.textContent = t("popupHintNotAWebpage");
   } else {
     hostEl.textContent = current.host;
 
     if (isBuiltin(current.host)) {
-      configureAction(actionEl, "✓ Always enabled", true, true);
-      hintEl.textContent = "This site is built in. The radio panel appears automatically.";
+      configureAction(actionEl, t("popupActionAlwaysEnabled"), true, true);
+      hintEl.textContent = t("popupHintBuiltin");
     } else if (domains.includes(current.host)) {
-      configureAction(actionEl, "Remove this site", false, true, async () => {
+      configureAction(actionEl, t("popupActionRemove"), false, true, async () => {
         actionEl.disabled = true;
         await send({ type: "hrs:removeDomain", host: current.host });
         await render();
       });
-      hintEl.textContent = "The radio panel is enabled here. Reload the page after removing.";
+      hintEl.textContent = t("popupHintEnabled");
     } else {
       const addCurrentSite = async () => {
         let granted = false;
         try {
           granted = await requestOrigins(originPatterns(current.host));
         } catch (e) {
-          hintEl.textContent = "Permission request failed: " + (e && e.message || e);
+          hintEl.textContent = t("popupPermissionFailed", String(e && e.message || e));
           return;
         }
         if (!granted) {
-          hintEl.textContent = "Permission was not granted.";
+          hintEl.textContent = t("popupPermissionDenied");
           return;
         }
         actionEl.disabled = true;
-        actionEl.textContent = "Registering…";
+        actionEl.textContent = t("popupRegistering");
         const res = await send({ type: "hrs:registerDomain", host: current.host });
         if (res && res.ok) {
           api.tabs.reload(current.tabId);
           window.close();
         } else {
-          configureAction(actionEl, `Add ${current.host}`, false, false, addCurrentSite);
-          hintEl.textContent = "Failed to register content script.";
+          configureAction(actionEl, t("popupActionAdd", current.host), false, false, addCurrentSite);
+          hintEl.textContent = t("popupRegisterFailed");
         }
       };
-      configureAction(actionEl, `Add ${current.host}`, false, false, addCurrentSite);
-      hintEl.textContent = "Adds permission for this exact hostname only. Reload the page after enabling.";
+      configureAction(actionEl, t("popupActionAdd", current.host), false, false, addCurrentSite);
+      hintEl.textContent = t("popupHintAdd");
     }
   }
 
@@ -125,7 +107,7 @@ async function render() {
   for (const host of BUILTIN_HOSTS) {
     const tag = document.createElement("span");
     tag.className = "empty";
-    tag.textContent = "built-in";
+    tag.textContent = t("popupBuiltinTag");
     appendListItem(listEl, host, tag);
   }
 
@@ -133,7 +115,7 @@ async function render() {
     if (!isValidHost(host)) continue;
     const btn = document.createElement("button");
     btn.className = "remove";
-    btn.textContent = "Remove";
+    btn.textContent = t("popupRemoveButton");
     btn.onclick = async () => {
       btn.disabled = true;
       await send({ type: "hrs:removeDomain", host });
@@ -145,4 +127,13 @@ async function render() {
   emptyEl.hidden = domains.length > 0;
 }
 
-document.addEventListener("DOMContentLoaded", render);
+function applyStaticI18n() {
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    el.textContent = t(el.getAttribute("data-i18n"));
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  applyStaticI18n();
+  render();
+});

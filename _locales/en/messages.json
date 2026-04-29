@@ -1,0 +1,134 @@
+{
+  "extensionName": {
+    "message": "Habs Radio Sync",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "Listen to radio commentary in sync with your sports stream.",
+    "description": "Manifest description"
+  },
+  "panelTitle": {
+    "message": "🏒 Habs Radio Sync",
+    "description": "Title shown at the top of the in-page panel"
+  },
+  "panelCollapseTitle": {
+    "message": "Collapse"
+  },
+  "panelPlay": {
+    "message": "▶ Play"
+  },
+  "panelPause": {
+    "message": "⏸ Pause"
+  },
+  "panelReloadTitle": {
+    "message": "Reload stream and flush buffer"
+  },
+  "panelSyncDelay": {
+    "message": "Sync delay"
+  },
+  "panelBufferLabel": {
+    "message": "Buffer: $SECONDS$s / 60s",
+    "placeholders": {
+      "seconds": { "content": "$1" }
+    }
+  },
+  "panelBufferFilling": {
+    "message": " — filling to $SECONDS$s…",
+    "placeholders": {
+      "seconds": { "content": "$1" }
+    }
+  },
+  "panelMuteTip": {
+    "message": "We auto-mute the video player when you press play. If you still hear it, mute the video manually using its own controls. Don't mute the whole tab — that mutes the radio too."
+  },
+  "panelMuteTipChrome": {
+    "message": "We auto-mute the video player when you press play. If you still hear it, mute the video manually using its own controls."
+  },
+  "statusConnecting": {
+    "message": "Connecting…"
+  },
+  "statusPlaying": {
+    "message": "Playing $STATION$",
+    "placeholders": {
+      "station": { "content": "$1" }
+    }
+  },
+  "statusPaused": {
+    "message": "Paused"
+  },
+  "statusFailedToPlay": {
+    "message": "Failed to play stream"
+  },
+  "statusReloading": {
+    "message": "Reloading stream…"
+  },
+  "statusReloadFailed": {
+    "message": "Reload failed"
+  },
+  "statusInvalidated": {
+    "message": "Extension was updated. Please reload this page."
+  },
+  "popupCurrentSite": {
+    "message": "Current site"
+  },
+  "popupNotAWebpage": {
+    "message": "(not a webpage)"
+  },
+  "popupUnavailable": {
+    "message": "Unavailable"
+  },
+  "popupHintNotAWebpage": {
+    "message": "Open a sports streaming page, then click the extension icon to enable it there."
+  },
+  "popupActionAlwaysEnabled": {
+    "message": "✓ Always enabled"
+  },
+  "popupHintBuiltin": {
+    "message": "This site is built in. The radio panel appears automatically."
+  },
+  "popupActionRemove": {
+    "message": "Remove this site"
+  },
+  "popupHintEnabled": {
+    "message": "The radio panel is enabled here. Reload the page after removing."
+  },
+  "popupActionAdd": {
+    "message": "Add $HOST$",
+    "placeholders": {
+      "host": { "content": "$1" }
+    }
+  },
+  "popupHintAdd": {
+    "message": "Adds permission for this exact hostname only. Reload the page after enabling."
+  },
+  "popupPermissionFailed": {
+    "message": "Permission request failed: $REASON$",
+    "placeholders": {
+      "reason": { "content": "$1" }
+    }
+  },
+  "popupPermissionDenied": {
+    "message": "Permission was not granted."
+  },
+  "popupRegistering": {
+    "message": "Registering…"
+  },
+  "popupRegisterFailed": {
+    "message": "Failed to register content script."
+  },
+  "popupEnabledSites": {
+    "message": "Enabled sites"
+  },
+  "popupBuiltinTag": {
+    "message": "built-in"
+  },
+  "popupRemoveButton": {
+    "message": "Remove"
+  },
+  "popupEmptyList": {
+    "message": "No extra sites enabled yet."
+  },
+  "popupFootnote": {
+    "message": "Built-in sites (Sportsnet, RDS, TVA Sports) are always enabled."
+  }
+}

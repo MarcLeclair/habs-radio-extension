@@ -1,23 +1,67 @@
 const api = (typeof browser !== "undefined") ? browser : chrome;
-const USE_PROMISE_APIS = typeof browser !== "undefined" && api === browser;
+const t = (key, ...subs) => api.i18n.getMessage(key, subs.length ? subs : undefined);
 
+let extensionInvalidated = false;
+const invalidatedListeners = new Set();
+function isContextInvalidatedError(err) {
+  const msg = err && (err.message || String(err));
+  return typeof msg === "string" && /context invalidated|invalidated context/i.test(msg);
+}
 function send(msg) {
-  if (USE_PROMISE_APIS) {
-    return api.runtime.sendMessage(msg).catch(() => undefined);
-  }
-  return new Promise((resolve) => {
-    try {
-      api.runtime.sendMessage(msg, (res) => resolve(res));
-    } catch (e) {
-      resolve(undefined);
+  return api.runtime.sendMessage(msg).catch((err) => {
+    if (isContextInvalidatedError(err) && !extensionInvalidated) {
+      extensionInvalidated = true;
+      invalidatedListeners.forEach((fn) => { try { fn(); } catch {} });
+    }
+    return undefined;
+  });
+}
+
+const mutedByUs = new WeakSet();
+
+function muteVideo(v) {
+  try {
+    if (!v.muted) {
+      v.muted = true;
+      mutedByUs.add(v);
+    }
+  } catch {}
+}
+
+function muteSiteVideos() {
+  document.querySelectorAll("video").forEach(muteVideo);
+}
+
+function unmuteOurVideos() {
+  document.querySelectorAll("video").forEach((v) => {
+    if (mutedByUs.has(v)) {
+      try { v.muted = false; } catch {}
+      mutedByUs.delete(v);
     }
   });
 }
 
-function muteSiteVideos() {
-  document.querySelectorAll("video").forEach((v) => {
-    try { v.muted = true; } catch {}
+let videoMuteObserver = null;
+function startMutingNewVideos() {
+  if (videoMuteObserver) return;
+  videoMuteObserver = new MutationObserver((mutations) => {
+    for (const m of mutations) {
+      for (const node of m.addedNodes) {
+        if (node.nodeType !== Node.ELEMENT_NODE) continue;
+        if (node.tagName === "VIDEO") {
+          muteVideo(node);
+        } else if (node.querySelectorAll) {
+          node.querySelectorAll("video").forEach(muteVideo);
+        }
+      }
+    }
   });
+  videoMuteObserver.observe(document.documentElement, { childList: true, subtree: true });
+}
+function stopMutingNewVideos() {
+  if (!videoMuteObserver) return;
+  videoMuteObserver.disconnect();
+  videoMuteObserver = null;
 }
 
 function $(root, selector) {
@@ -29,18 +73,18 @@ function buildPanel() {
   panel.id = "hrs-panel";
   panel.innerHTML = `
     <div class="hrs-header">
-      <span class="hrs-title">🏒 Habs Radio Sync</span>
-      <button class="hrs-collapse" title="Collapse">–</button>
+      <span class="hrs-title"></span>
+      <button class="hrs-collapse">–</button>
     </div>
     <div class="hrs-body">
       <div class="hrs-stations"></div>
       <div class="hrs-controls">
-        <button class="hrs-play">▶ Play</button>
-        <button class="hrs-reload" title="Reload stream and flush buffer">↻</button>
+        <button class="hrs-play"></button>
+        <button class="hrs-reload">↻</button>
       </div>
       <div class="hrs-sync">
         <div class="hrs-sync-label">
-          <span>Sync delay</span>
+          <span class="hrs-sync-text"></span>
           <span class="hrs-sync-value">0s</span>
         </div>
         <input type="range" min="0" max="60" step="1" value="0" />
@@ -49,7 +93,7 @@ function buildPanel() {
             <div class="hrs-buffer-fill"></div>
             <div class="hrs-buffer-played"></div>
           </div>
-          <div class="hrs-buffer-label">Buffer: 0s / 60s</div>
+          <div class="hrs-buffer-label"></div>
         </div>
         <div class="hrs-nudge">
           <button data-delta="-10">−10s</button>
@@ -61,13 +105,22 @@ function buildPanel() {
         </div>
       </div>
       <div class="hrs-status"></div>
-      <div class="hrs-mute-tip">
-        We auto-mute the video player when you press play. If you still
-        hear it, mute the video manually using its own controls. Don't
-        mute the whole tab — that mutes the radio too.
-      </div>
+      <div class="hrs-mute-tip"></div>
     </div>
   `;
+  panel.querySelector(".hrs-title").textContent = t("panelTitle");
+  panel.querySelector(".hrs-collapse").title = t("panelCollapseTitle");
+  panel.querySelector(".hrs-play").textContent = t("panelPlay");
+  panel.querySelector(".hrs-reload").title = t("panelReloadTitle");
+  panel.querySelector(".hrs-sync-text").textContent = t("panelSyncDelay");
+  panel.querySelector(".hrs-buffer-label").textContent = t("panelBufferLabel", "0");
+  const isFirefox = navigator.userAgent.includes("Firefox");
+  const muteTipEl = panel.querySelector(".hrs-mute-tip");
+  if (isFirefox) {
+    muteTipEl.textContent = t("panelMuteTip");
+  } else {
+    muteTipEl.textContent = t("panelMuteTipChrome");
+  }
   return panel;
 }
 
@@ -138,14 +191,22 @@ async function init() {
 
   makeDraggable(panel, header);
 
+  invalidatedListeners.add(() => {
+    statusEl.textContent = t("statusInvalidated");
+    playBtn.disabled = true;
+    reloadBtn.disabled = true;
+    slider.disabled = true;
+    panel.querySelectorAll(".hrs-nudge button").forEach((b) => { b.disabled = true; });
+  });
+
   let activeStation = stations[0];
   let playing = false;
 
   function setPlaying(nextPlaying, status) {
     playing = nextPlaying;
-    playBtn.textContent = playing ? "⏸ Pause" : "▶ Play";
+    playBtn.textContent = playing ? t("panelPause") : t("panelPlay");
     playBtn.disabled = false;
-    statusEl.textContent = status || (playing ? `Playing ${activeStation.name}` : "Paused");
+    statusEl.textContent = status || (playing ? t("statusPlaying", activeStation.name) : t("statusPaused"));
   }
 
   const applyHeartbeat = (data) => {
@@ -156,9 +217,9 @@ async function init() {
     bufferFill.style.width = Math.min(100, (buffered / 60) * 100) + "%";
     bufferPlayed.style.width = Math.min(100, (applied / 60) * 100) + "%";
 
-    let label = `Buffer: ${Math.round(buffered)}s / 60s`;
+    let label = t("panelBufferLabel", String(Math.round(buffered)));
     if (requested > buffered + 0.5) {
-      label += ` — filling to ${Math.round(requested)}s…`;
+      label += t("panelBufferFilling", String(Math.round(requested)));
     }
     bufferLabel.textContent = label;
   };
@@ -197,31 +258,36 @@ async function init() {
   playBtn.addEventListener("click", async () => {
     if (playing) {
       await send({ type: "hrs:pause" });
+      stopMutingNewVideos();
+      unmuteOurVideos();
       setPlaying(false);
       return;
     }
-    statusEl.textContent = "Connecting…";
+    statusEl.textContent = t("statusConnecting");
     playBtn.disabled = true;
     try {
       muteSiteVideos();
+      startMutingNewVideos();
       const res = await send({ type: "hrs:play", stationId: activeStation.id });
       if (!res || !res.ok) throw new Error(res && res.reason || "play failed");
       setPlaying(true);
     } catch (e) {
-      statusEl.textContent = "Failed to play stream";
+      stopMutingNewVideos();
+      unmuteOurVideos();
+      statusEl.textContent = t("statusFailedToPlay");
       playBtn.disabled = false;
     }
   });
 
   reloadBtn.addEventListener("click", async () => {
     reloadBtn.disabled = true;
-    statusEl.textContent = "Reloading stream…";
+    statusEl.textContent = t("statusReloading");
     try {
       const res = await send({ type: "hrs:reload" });
       if (!res || !res.ok) throw new Error("reload failed");
-      statusEl.textContent = playing ? `Playing ${activeStation.name}` : "Paused";
+      statusEl.textContent = playing ? t("statusPlaying", activeStation.name) : t("statusPaused");
     } catch (e) {
-      statusEl.textContent = "Reload failed";
+      statusEl.textContent = t("statusReloadFailed");
     } finally {
       reloadBtn.disabled = false;
     }
@@ -250,11 +316,10 @@ async function init() {
   send({ type: "hrs:setDelay", seconds: initialDelay }).catch(() => {});
 
   send({ type: "hrs:queryState" }).then((res) => {
-    if (res && res.station) {
-      send({ type: "hrs:reload" }).catch(() => {});
-      if (res.playing) {
-        setPlaying(true);
-      }
+    if (res && res.playing) {
+      muteSiteVideos();
+      startMutingNewVideos();
+      setPlaying(true);
     }
   }).catch(() => {});
 }

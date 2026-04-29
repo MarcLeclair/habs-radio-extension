@@ -3,7 +3,6 @@ if (typeof importScripts === "function" && typeof self.hrsIsValidHost === "undef
 }
 
 const api = (typeof browser !== "undefined") ? browser : chrome;
-const USE_PROMISE_APIS = typeof browser !== "undefined" && api === browser;
 const STORAGE_KEY = "hrs-user-domains";
 const SCRIPT_FILES = ["src/stations.js", "src/content.js"];
 const CSS_FILES = ["src/panel.css"];
@@ -13,25 +12,6 @@ const originPatterns = self.hrsOriginPatterns;
 
 let iframeHostTabId = null;
 let pendingIframeTabId = null;
-
-const storageGet = (keys) => USE_PROMISE_APIS
-  ? api.storage.local.get(keys)
-  : new Promise((resolve) => api.storage.local.get(keys, resolve));
-const storageSet = (items) => USE_PROMISE_APIS
-  ? api.storage.local.set(items)
-  : new Promise((resolve) => api.storage.local.set(items, resolve));
-const containsPermission = (permissions) => USE_PROMISE_APIS
-  ? api.permissions.contains(permissions)
-  : new Promise((resolve) => api.permissions.contains(permissions, resolve));
-const removePermission = (permissions) => USE_PROMISE_APIS
-  ? api.permissions.remove(permissions)
-  : new Promise((resolve) => api.permissions.remove(permissions, resolve));
-const queryTabs = (query) => USE_PROMISE_APIS
-  ? api.tabs.query(query)
-  : new Promise((resolve) => api.tabs.query(query, resolve));
-const sendTabMessage = (tabId, message) => USE_PROMISE_APIS
-  ? api.tabs.sendMessage(tabId, message)
-  : new Promise((resolve) => api.tabs.sendMessage(tabId, message, resolve));
 
 function forbidden(sendResponse) {
   sendResponse({ ok: false, reason: "forbidden" });
@@ -46,20 +26,20 @@ function asyncResponse(sendResponse, fn) {
 }
 
 async function getDomains() {
-  const res = await storageGet([STORAGE_KEY]);
+  const res = await api.storage.local.get([STORAGE_KEY]);
   return ((res && res[STORAGE_KEY]) || []).filter(isValidHost);
 }
 
 async function setDomains(list) {
-  return storageSet({ [STORAGE_KEY]: list.filter(isValidHost) });
+  return api.storage.local.set({ [STORAGE_KEY]: list.filter(isValidHost) });
 }
 
 function hasHostPermission(host) {
-  return containsPermission({ origins: originPatterns(host) });
+  return api.permissions.contains({ origins: originPatterns(host) });
 }
 
 function removeHostPermission(host) {
-  return removePermission({ origins: originPatterns(host) });
+  return api.permissions.remove({ origins: originPatterns(host) });
 }
 
 const BUILTIN_HOSTS = ["sportsnet.ca", "rds.ca", "tvasports.ca"];
@@ -130,14 +110,23 @@ async function ensureAudioHost(senderTabId) {
     try {
       const has = await api.offscreen.hasDocument().catch(() => false);
       if (!has) {
-        await api.offscreen.createDocument({
-          url: api.runtime.getURL("src/audio-host.html"),
-          reasons: ["AUDIO_PLAYBACK"],
-          justification: "Plays radio audio in an extension-owned context so the radio CDN does not see the user's browsing site as the request Origin."
-        });
+        try {
+          await api.offscreen.createDocument({
+            url: api.runtime.getURL("src/audio-host.html"),
+            reasons: ["AUDIO_PLAYBACK"],
+            justification: "Plays radio audio in an extension-owned context so the radio CDN does not see the user's browsing site as the request Origin."
+          });
+        } catch (e) {
+          const msg = String(e && e.message || e);
+          if (!/already.*offscreen|single offscreen/i.test(msg)) {
+            throw e;
+          }
+        }
       }
       return { kind: "offscreen" };
-    } catch (e) {}
+    } catch (e) {
+      throw new Error("offscreen unavailable: " + (e && e.message || e));
+    }
   }
 
   if (iframeHostTabId !== null) {
@@ -146,7 +135,7 @@ async function ensureAudioHost(senderTabId) {
   if (typeof senderTabId === "number") {
     try {
       pendingIframeTabId = senderTabId;
-      await sendTabMessage(senderTabId, { type: "hrs:inject-audio-host" });
+      await api.tabs.sendMessage(senderTabId, { type: "hrs:inject-audio-host" });
       iframeHostTabId = senderTabId;
       return { kind: "iframe", tabId: senderTabId };
     } catch (e) {
@@ -159,6 +148,21 @@ async function ensureAudioHost(senderTabId) {
 let audioPort = null;
 let audioMessageId = 0;
 const pendingAudioReplies = new Map();
+
+let audioPortDeferred = null;
+function newAudioPortDeferred() {
+  let resolve;
+  const promise = new Promise((r) => { resolve = r; });
+  audioPortDeferred = { promise, resolve };
+}
+newAudioPortDeferred();
+function waitForAudioPort(timeoutMs = 5000) {
+  if (audioPort) return Promise.resolve();
+  return Promise.race([
+    audioPortDeferred.promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error("audio host did not connect")), timeoutMs))
+  ]);
+}
 
 api.runtime.onConnect.addListener((p) => {
   if (p.name !== "hrs-audio") return;
@@ -190,6 +194,7 @@ api.runtime.onConnect.addListener((p) => {
     iframeHostTabId = p.sender.tab.id;
     pendingIframeTabId = null;
   }
+  audioPortDeferred.resolve();
   p.onMessage.addListener((msg) => {
     if (audioPort !== p) return;
     if (!msg || !msg.type) return;
@@ -207,18 +212,11 @@ api.runtime.onConnect.addListener((p) => {
     if (audioPort !== p) return;
     audioPort = null;
     iframeHostTabId = null;
+    newAudioPortDeferred();
     for (const { reject } of pendingAudioReplies.values()) reject(new Error("audio host disconnected"));
     pendingAudioReplies.clear();
   });
 });
-
-async function waitForAudioPort() {
-  for (let i = 0; i < 50; i++) {
-    if (audioPort) return;
-    await new Promise((r) => setTimeout(r, 100));
-  }
-  throw new Error("audio host did not connect");
-}
 
 async function callAudioHost(message, senderTabId) {
   await ensureAudioHost(senderTabId);
@@ -243,83 +241,147 @@ async function callAudioHost(message, senderTabId) {
 }
 
 function broadcastToContentScripts(message) {
-  queryTabs({}).then((tabs) => {
+  api.tabs.query({}).then((tabs) => {
     for (const t of tabs || []) {
-      sendTabMessage(t.id, message).catch(() => {});
+      api.tabs.sendMessage(t.id, message).catch(() => {});
     }
   }).catch(() => {});
 }
 
+async function teardownAudioHost() {
+  if (audioPort) {
+    try { audioPort.disconnect(); } catch (e) {}
+    audioPort = null;
+  }
+  iframeHostTabId = null;
+  pendingIframeTabId = null;
+  for (const { reject } of pendingAudioReplies.values()) {
+    reject(new Error("audio host torn down"));
+  }
+  pendingAudioReplies.clear();
+  newAudioPortDeferred();
+  if (api.offscreen && api.offscreen.closeDocument) {
+    try {
+      const has = await api.offscreen.hasDocument().catch(() => false);
+      if (has) await api.offscreen.closeDocument();
+    } catch (e) {}
+  }
+}
+
+async function isPanelTabUrl(url) {
+  if (!url) return false;
+  try {
+    const u = new URL(url);
+    if (u.protocol !== "https:") return false;
+    const host = u.hostname.toLowerCase();
+    if (!isValidHost(host)) return false;
+    if (isBuiltinHost(host)) return true;
+    const domains = await getDomains();
+    return domains.includes(host);
+  } catch {
+    return false;
+  }
+}
+
+async function panelTabsRemain(excludeTabId) {
+  return new Promise((resolve) => {
+    api.tabs.query({}).then(async (tabs) => {
+      for (const t of tabs || []) {
+        if (t.id === excludeTabId) continue;
+        if (await isPanelTabUrl(t.url)) {
+          resolve(true);
+          return;
+        }
+      }
+      resolve(false);
+    }).catch(() => resolve(false));
+  });
+}
+
+api.tabs.onRemoved.addListener(async (tabId) => {
+  if (!(await panelTabsRemain(tabId))) {
+    await teardownAudioHost();
+  }
+});
+
+api.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
+  if (!changeInfo.url) return;
+  if (!(await panelTabsRemain(-1))) {
+    await teardownAudioHost();
+  }
+});
+
 api.runtime.onInstalled.addListener(reRegisterAll);
 api.runtime.onStartup.addListener(reRegisterAll);
 
-api.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (!msg || !msg.type) return false;
+const AUDIO_COMMAND_TYPES = {
+  "hrs:play": "hrs:audio-play",
+  "hrs:pause": "hrs:audio-pause",
+  "hrs:reload": "hrs:audio-reload",
+  "hrs:setDelay": "hrs:audio-setDelay"
+};
 
-  if (msg.type === "hrs:listDomains") {
-    if (!isPopupSender(sender)) return forbidden(sendResponse);
-    return asyncResponse(sendResponse, async () => ({ domains: await getDomains() }));
-  }
-
-  if (msg.type === "hrs:registerDomain") {
-    if (!isPopupSender(sender)) return forbidden(sendResponse);
-    const host = msg.host;
-    if (!isValidHost(host)) {
-      sendResponse({ ok: false, reason: "invalid-host" });
-      return false;
-    }
-    return asyncResponse(sendResponse, async () => {
-      if (!(await hasHostPermission(host))) return { ok: false, reason: "no-permission" };
-      const ok = await registerForDomain(host);
+const handlers = {
+  "hrs:listDomains": {
+    auth: "popup",
+    handler: async () => ({ domains: await getDomains() })
+  },
+  "hrs:registerDomain": {
+    auth: "popup",
+    handler: async (msg) => {
+      if (!isValidHost(msg.host)) return { ok: false, reason: "invalid-host" };
+      if (!(await hasHostPermission(msg.host))) return { ok: false, reason: "no-permission" };
+      const ok = await registerForDomain(msg.host);
       if (ok) {
         const list = await getDomains();
-        if (!list.includes(host)) list.push(host);
+        if (!list.includes(msg.host)) list.push(msg.host);
         await setDomains(list);
       }
       return { ok };
-    });
-  }
-
-  if (msg.type === "hrs:removeDomain") {
-    if (!isPopupSender(sender)) return forbidden(sendResponse);
-    const host = msg.host;
-    if (!isValidHost(host)) {
-      sendResponse({ ok: false, reason: "invalid-host" });
-      return false;
     }
-    return asyncResponse(sendResponse, async () => {
-      await unregisterForDomain(host);
-      try { await removeHostPermission(host); } catch {}
-      const list = (await getDomains()).filter((h) => h !== host);
+  },
+  "hrs:removeDomain": {
+    auth: "popup",
+    handler: async (msg) => {
+      if (!isValidHost(msg.host)) return { ok: false, reason: "invalid-host" };
+      await unregisterForDomain(msg.host);
+      try { await removeHostPermission(msg.host); } catch {}
+      const list = (await getDomains()).filter((h) => h !== msg.host);
       await setDomains(list);
       return { ok: true };
-    });
-  }
-
-  if (msg.type === "hrs:queryState") {
-    return asyncResponse(sendResponse, async () => {
-      if (!(await isAllowedContentSender(sender))) {
-        return { ok: false, reason: "forbidden" };
-      }
+    }
+  },
+  "hrs:queryState": {
+    auth: "content",
+    handler: async (msg, sender) => {
       if (!audioPort) return { playing: false };
       try {
-        return await callAudioHost({ type: "hrs:audio-queryState" }, sender && sender.tab && sender.tab.id);
+        return await callAudioHost({ type: "hrs:audio-queryState" }, sender.tab.id);
       } catch (e) {
         return { playing: false };
       }
-    });
+    }
   }
+};
+for (const fromType of Object.keys(AUDIO_COMMAND_TYPES)) {
+  handlers[fromType] = {
+    auth: "content",
+    handler: (msg, sender) =>
+      callAudioHost({ ...msg, type: AUDIO_COMMAND_TYPES[fromType] }, sender.tab.id)
+  };
+}
 
-  if (msg.type === "hrs:play" || msg.type === "hrs:pause" ||
-      msg.type === "hrs:reload" || msg.type === "hrs:setDelay") {
-    return asyncResponse(sendResponse, async () => {
-      if (!(await isAllowedContentSender(sender))) {
-        return { ok: false, reason: "forbidden" };
-      }
-      const audioMsg = { ...msg, type: "hrs:audio-" + msg.type.slice(4) };
-      return callAudioHost(audioMsg, sender && sender.tab && sender.tab.id);
-    });
+api.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (!msg || !msg.type) return false;
+  const entry = handlers[msg.type];
+  if (!entry) return false;
+
+  if (entry.auth === "popup") {
+    if (!isPopupSender(sender)) return forbidden(sendResponse);
+    return asyncResponse(sendResponse, () => entry.handler(msg, sender));
   }
-
-  return false;
+  return asyncResponse(sendResponse, async () => {
+    if (!(await isAllowedContentSender(sender))) return { ok: false, reason: "forbidden" };
+    return entry.handler(msg, sender);
+  });
 });

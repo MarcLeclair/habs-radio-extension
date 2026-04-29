@@ -35,9 +35,11 @@ class DelayProcessor extends AudioWorkletProcessor {
         const safeMax = Math.max(0, this.samplesWritten - 1);
         const newDelay = Math.min(this.requestedDelaySamples, safeMax);
         if (newDelay !== this.delaySamples) {
-          this.oldDelaySamples = this.delaySamples;
+          if (this.crossfadeRemaining === 0) {
+            this.oldDelaySamples = this.delaySamples;
+            this.crossfadeRemaining = CROSSFADE_SAMPLES;
+          }
           this.delaySamples = newDelay;
-          this.crossfadeRemaining = CROSSFADE_SAMPLES;
         }
       }
     };
