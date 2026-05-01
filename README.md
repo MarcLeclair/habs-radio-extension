@@ -1,44 +1,38 @@
 # Habs Radio Sync
 
-Browser extension that overlays a (for right now) French radio commentary stream from 98.5 FM on top of your Sportsnet / RDS / TVA Sports game tab (by default, can add more website if need be), with an adjustable delay slider so the play-by-play matches the action on screen.
+A small project I create to help line up the French radio commentary (98.5) with Habs game streams. Currently, the project supports google tv (with android remote) and web extension.
 
-Works in Chrome and Firefox.
+- `apps/browser-extension` - Chrome/Firefox extension to play on certain sites (sportsnet, rds, etc...)
+- `apps/android-tv` - Android TV playback that runs the radio stream and exposes local-network controls.
+- `apps/android-remote` - Android phone remote for controlling the Android TV app.
+- `shared` - Kotlin Multiplatform module for stations, playback state, and the remote protocol.
 
-## Stations
-- **98,5 FM** — Cogeco, Canadiens en français
+## Supported Station
 
-## Install (locally)
+- 98,5 FM - Cogeco, Canadiens en francais
 
-### Chrome
+## App Docs
 
-1. Open `chrome://extensions`
-2. Toggle **Developer mode** on
-3. Click **Load unpacked** and pick this folder
+- [Browser extension](apps/browser-extension/README.md)
+- [Android TV app](apps/android-tv/README.md)
+- [Android phone remote](apps/android-remote/README.md)
 
-### Firefox
+## Maintainer Docs
 
-1. Open `about:debugging#/runtime/this-firefox`
-2. Click **Load Temporary Add-on**
-3. Pick `manifest.json` in this folder
+- [Play Console drafts](docs/play-console/README.md)
 
-The extension activates on `sportsnet.ca`, `rds.ca`, and `tvasports.ca`. A floating panel appears in the bottom-right of the page.
+## Build
 
-## Usage
+See the app READMEs for build and packaging instructions:
 
-1. Open a Habs game on one of the supported sites.
-2. Press **Play** — the page video auto-mutes.
-3. Drag the **Sync delay** slider until the radio call matches what you see (typically 15–25s).
-4. Use the ±1s,5s,10s buttons for live nudging.
+- [Browser extension](apps/browser-extension/README.md#build)
+- [Android TV app](apps/android-tv/README.md#build)
+- [Android phone remote](apps/android-remote/README.md#build)
 
-## Notes on latency
+## Privacy
 
-- Slider range: 0–60s
-- The radio should (mostly) be ahead of any stream from sportsnet / other stations. Otherwise, you can try to pause your video feed.
+Habs Radio Sync does not use accounts, analytics, ads, or tracking. Privacy policies live with each app:
 
-## Files
-
-- `manifest.json` — MV3 manifest, cross-browser
-- `src/stations.js` — preset stream URLs and per-host default delays
-- `src/sync.js` — Web Audio graph: `<audio>` → `MediaElementSource` → `DelayNode` → output
-- `src/content.js` — injects and wires up the floating panel
-- `src/panel.css` — panel styling
+- [Browser extension](apps/browser-extension/PRIVACY.md)
+- [Android TV app](apps/android-tv/PRIVACY.md)
+- [Android phone remote](apps/android-remote/PRIVACY.md)

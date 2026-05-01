@@ -2,10 +2,37 @@
 web-ext-artifacts/
 dist/
 manifest.json
+apps/browser-extension/web-ext-artifacts/
+apps/browser-extension/dist/
+apps/browser-extension/manifest.json
 *.zip
 *.xpi
 *.crx
 *.pem
+
+# Android / Gradle
+.gradle/
+.kotlin/
+build/
+**/build/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+*.iml
+*.apk
+*.ap_
+*.aab
+*.aar
+*.dex
+*.class
+*.hprof
+
+# Android signing / local secrets
+*.jks
+*.keystore
+*.p12
+*.key
 
 # Dependencies
 node_modules/

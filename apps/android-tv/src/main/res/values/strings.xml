@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Habs Radio Sync</string>
+    <string name="intro_text">Press Play to start radio on this TV.\nAfter pairing, the phone remote can also control this TV on port %1$d.</string>
+    <string name="onboarding_text">First run: install this TV app, open it, then open Habs Radio Remote on your phone. The phone should discover this TV on the same network. If discovery fails, enter this TV IP address manually.</string>
+    <string name="status_starting">Starting control server&#8230;</string>
+    <string name="status_buffering">Buffering&#8230;</string>
+    <string name="status_paused">Paused</string>
+    <string name="status_stopped">Stopped</string>
+    <string name="status_server_unavailable">Starting local control server. If this stays visible, restart the TV app.</string>
+    <string name="debug_enabled">Debug diagnostics enabled</string>
+    <string name="debug_disabled">Debug diagnostics hidden</string>
+    <string name="button_play_radio">Play Radio</string>
+    <string name="button_pause">Pause</string>
+    <string name="button_stop">Stop</string>
+    <string name="button_refresh_status">Refresh Status</string>
+    <string name="button_privacy">Privacy</string>
+    <string name="dialog_privacy_title">Privacy</string>
+    <string name="dialog_ok">OK</string>
+</resources>
