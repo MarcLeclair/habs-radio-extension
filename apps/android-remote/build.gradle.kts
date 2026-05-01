@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "io.github.habsradiosync.remote"
+    namespace = "io.github.cococraft.puckradiosync.remote"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -15,7 +15,7 @@ android {
     val appVersionName = providers.gradleProperty("hrs.versionName").get()
 
     defaultConfig {
-        applicationId = "io.github.habsradiosync.remote"
+        applicationId = "io.github.cococraft.puckradiosync.remote"
         minSdk = 26
         targetSdk = 37
         versionCode = appVersionCode

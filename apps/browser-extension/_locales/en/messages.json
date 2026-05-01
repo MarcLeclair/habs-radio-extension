@@ -1,6 +1,6 @@
 {
   "extensionName": {
-    "message": "Habs Radio Sync",
+    "message": "Puck Radio Sync",
     "description": "Extension name"
   },
   "extensionDescription": {
@@ -8,7 +8,7 @@
     "description": "Manifest description"
   },
   "panelTitle": {
-    "message": "🏒 Habs Radio Sync",
+    "message": "🏒 Puck Radio Sync",
     "description": "Title shown at the top of the in-page panel"
   },
   "panelCollapseTitle": {

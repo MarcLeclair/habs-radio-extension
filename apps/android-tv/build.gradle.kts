@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "io.github.habsradiosync.tv"
+    namespace = "io.github.cococraft.puckradiosync.tv"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -15,7 +15,7 @@ android {
     val appVersionName = providers.gradleProperty("hrs.versionName").get()
 
     defaultConfig {
-        applicationId = "io.github.habsradiosync.tv"
+        applicationId = "io.github.cococraft.puckradiosync.tv"
         minSdk = 26
         targetSdk = 37
         versionCode = appVersionCode

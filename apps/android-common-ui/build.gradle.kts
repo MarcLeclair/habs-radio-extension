@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "io.github.habsradiosync.androidcommonui"
+    namespace = "io.github.cococraft.puckradiosync.androidcommonui"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1

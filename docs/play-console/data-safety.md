@@ -53,4 +53,4 @@ Android TV app:
 
 Suggested Play listing text:
 
-Habs Radio Sync does not use accounts, analytics, ads, or tracking. The apps use your local network to find and control your TV, use notifications for playback controls, and connect to radio stream URLs to play audio.
+Puck Radio Sync does not use accounts, analytics, ads, or tracking. The apps use your local network to find and control your TV, use notifications for playback controls, and connect to radio stream URLs to play audio.

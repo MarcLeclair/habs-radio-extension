@@ -1,4 +1,4 @@
-# Habs Radio Sync TV
+# Puck Radio Sync TV
 
 Android TV playback host for the radio stream. The app starts a foreground playback service, plays 98,5 FM, and exposes a small HTTP API on the local network so the phone remote can control playback, delay, volume, and station selection.
 

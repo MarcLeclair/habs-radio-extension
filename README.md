@@ -1,6 +1,6 @@
-# Habs Radio Sync
+# Puck Radio Sync
 
-A small project I create to help line up the French radio commentary (98.5) with Habs game streams. Currently, the project supports google tv (with android remote) and web extension.
+A small project I created to help line up French radio commentary with live hockey streams. Currently, the project supports Google TV with an Android remote and a browser extension.
 
 - `apps/browser-extension` - Chrome/Firefox extension to play on certain sites (sportsnet, rds, etc...)
 - `apps/android-tv` - Android TV playback that runs the radio stream and exposes local-network controls.
@@ -9,7 +9,7 @@ A small project I create to help line up the French radio commentary (98.5) with
 
 ## Supported Station
 
-- 98,5 FM - Cogeco, Canadiens en francais
+- 98,5 FM - Cogeco, French hockey radio
 
 ## App Docs
 
@@ -31,7 +31,7 @@ See the app READMEs for build and packaging instructions:
 
 ## Privacy
 
-Habs Radio Sync does not use accounts, analytics, ads, or tracking. Privacy policies live with each app:
+Puck Radio Sync does not use accounts, analytics, ads, or tracking. Privacy policies live with each app:
 
 - [Browser extension](apps/browser-extension/PRIVACY.md)
 - [Android TV app](apps/android-tv/PRIVACY.md)

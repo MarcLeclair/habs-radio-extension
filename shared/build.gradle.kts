@@ -5,7 +5,7 @@ plugins {
 
 kotlin {
     android {
-        namespace = "io.github.habsradiosync.shared"
+        namespace = "io.github.cococraft.puckradiosync.shared"
         compileSdk {
             version = release(36) {
                 minorApiLevel = 1

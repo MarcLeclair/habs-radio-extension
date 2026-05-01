@@ -2,7 +2,7 @@ const HRS_STATIONS = [
   {
     id: "chmp",
     name: "98,5 FM",
-    tagline: "Cogeco — Canadiens en français",
+    tagline: "Cogeco — French hockey radio",
     url: "https://playerservices.streamtheworld.com/api/livestream-redirect/CHMPFM.mp3",
     language: "fr"
   }

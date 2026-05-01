@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Habs Radio Sync</string>
+    <string name="app_name">Puck Radio Sync TV</string>
     <string name="intro_text">Press Play to start radio on this TV.\nAfter pairing, the phone remote can also control this TV on port %1$d.</string>
-    <string name="onboarding_text">First run: install this TV app, open it, then open Habs Radio Remote on your phone. The phone should discover this TV on the same network. If discovery fails, enter this TV IP address manually.</string>
+    <string name="onboarding_text">First run: install this TV app, open it, then open Puck Radio Remote on your phone. The phone should discover this TV on the same network. If discovery fails, enter this TV IP address manually.</string>
     <string name="status_starting">Starting control server&#8230;</string>
     <string name="status_buffering">Buffering&#8230;</string>
     <string name="status_paused">Paused</string>

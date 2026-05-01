@@ -1,6 +1,6 @@
-# Habs Radio Sync — Privacy Policy
+# Puck Radio Sync — Privacy Policy
 
-Habs Radio Sync does not collect, store, or transmit any personal data.
+Puck Radio Sync does not collect, store, or transmit any personal data.
 
 When you click Play, the extension makes a connection to the radio station's streaming server (currently 98,5 FM via streamtheworld.com) to fetch the audio stream. This connection includes your IP address as part of standard web requests, the same way visiting any website does. No other data is sent.
 

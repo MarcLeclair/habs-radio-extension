@@ -1,6 +1,6 @@
-# Habs Radio Sync Browser Extension
+# Puck Radio Sync Browser Extension
 
-Chrome/Firefox extension that plays the 98,5 FM stream alongside supported Habs game pages. It adds a floating sync panel and can mute the page video while delayed radio audio plays through the extension.
+Chrome/Firefox extension that plays the 98,5 FM stream alongside supported hockey game pages. It adds a floating sync panel and can mute the page video while delayed radio audio plays through the extension.
 
 ## Supported Sites
 
@@ -43,7 +43,7 @@ apps/browser-extension/build.sh firefox
 
 ## Usage
 
-1. Open a Habs game on one of the supported sites.
+1. Open a hockey game on one of the supported sites.
 2. Press **Play**. The page video is muted automatically.
 3. Drag the sync delay slider until the radio call matches the video.
 4. Use the nudge buttons for smaller live adjustments.

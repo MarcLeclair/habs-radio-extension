@@ -1,14 +1,14 @@
-# Habs Radio Sync TV — Privacy Policy
+# Puck Radio Sync TV — Privacy Policy
 
 Last updated: 2026-04-30
 
 TODO: After the Android TV app changes are pushed to the public repo, use this public `apps/android-tv/PRIVACY.md` URL in Play Console.
 
-Habs Radio Sync TV does not use accounts, analytics, ads, or tracking.
+Puck Radio Sync TV does not use accounts, analytics, ads, or tracking.
 
 ## Data Collection
 
-Habs Radio Sync TV does not collect, sell, or share personal data.
+Puck Radio Sync TV does not collect, sell, or share personal data.
 
 ## Local Network
 
@@ -24,7 +24,7 @@ The TV app uses notifications for playback status.
 
 ## Data Sharing
 
-Habs Radio Sync TV does not share user data with third parties.
+Puck Radio Sync TV does not share user data with third parties.
 
 Radio stream providers and your network provider may receive normal connection information when the TV app loads a radio stream.
 

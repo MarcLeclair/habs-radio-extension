@@ -1,10 +1,10 @@
-# Habs Radio Remote — Privacy Policy
+# Puck Radio Remote — Privacy Policy
 
-Habs Radio Remote does not use accounts, analytics, ads, or tracking.
+Puck Radio Remote does not use accounts, analytics, ads, or tracking.
 
 ## Data Collection
 
-Habs Radio Remote does not collect, sell, or share personal data.
+Puck Radio Remote does not collect, sell, or share personal data.
 
 ## Local Network
 
@@ -20,7 +20,7 @@ The phone remote uses notifications for quick playback controls.
 
 ## Data Sharing
 
-Habs Radio Remote does not share user data with third parties.
+Puck Radio Remote does not share user data with third parties.
 
 ## Contact
 

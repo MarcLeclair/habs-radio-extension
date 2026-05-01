@@ -1,13 +1,13 @@
 {
   "extensionName": {
-    "message": "Habs Radio Sync",
+    "message": "Puck Radio Sync",
     "description": "Extension name"
   },
   "extensionDescription": {
     "message": "Écoutez la description radio synchronisée avec votre diffusion sportive."
   },
   "panelTitle": {
-    "message": "🏒 Habs Radio Sync"
+    "message": "🏒 Puck Radio Sync"
   },
   "panelCollapseTitle": {
     "message": "Réduire"

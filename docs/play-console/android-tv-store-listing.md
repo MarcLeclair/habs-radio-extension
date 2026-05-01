@@ -2,11 +2,11 @@
 
 ## Short Description
 
-Play synchronized Habs radio audio on Android TV while watching another video app.
+Play synchronized hockey radio audio on Android TV while watching another video app.
 
 ## Full Description
 
-Habs Radio Sync TV plays a radio stream directly on your Android TV and exposes simple local-network controls for the Habs Radio Remote phone app. Open the TV app, start playback, then use the phone remote to adjust delay and volume so the radio call lines up with your video stream.
+Puck Radio Sync TV plays a radio stream directly on your Android TV and exposes simple local-network controls for the Puck Radio Remote phone app. Open the TV app, start playback, then use the phone remote to adjust delay and volume so the radio call lines up with your video stream.
 
 The app does not use accounts, analytics, ads, or tracking.
 
