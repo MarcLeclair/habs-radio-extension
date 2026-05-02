@@ -37,7 +37,10 @@ Download the latest TV APK from the [latest GitHub release](https://github.com/M
 
 ### ADB
 
-Enable developer options and network debugging on the TV, then run:
+Enable developer options and network debugging on the TV. Android's official developer-options documentation is here:
+[Configure on-device developer options](https://developer.android.com/studio/debug/dev-options).
+
+Then run:
 
 ```bash
 adb connect TV_IP:5555
