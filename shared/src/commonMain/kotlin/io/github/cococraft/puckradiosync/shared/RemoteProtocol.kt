@@ -2,6 +2,7 @@ package io.github.cococraft.puckradiosync.shared
 
 const val HRS_SERVICE_TYPE = "_puck-radio-sync._tcp."
 const val HRS_DEFAULT_CONTROL_PORT = 8787
+const val HRS_MAX_VOLUME_PERCENT = 400
 
 object RemotePaths {
     const val STATE = "/state"
@@ -52,7 +53,7 @@ sealed interface RemoteCommand {
 }
 
 fun clampDelaySeconds(seconds: Double): Double = seconds.coerceIn(0.0, 60.0)
-fun clampVolumePercent(percent: Int): Int = percent.coerceIn(0, 300)
+fun clampVolumePercent(percent: Int): Int = percent.coerceIn(0, HRS_MAX_VOLUME_PERCENT)
 
 fun RadioState.applyCommand(command: RemoteCommand): RadioState =
     when (command) {

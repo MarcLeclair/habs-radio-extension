@@ -14,6 +14,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import io.github.cococraft.puckradiosync.shared.HRS_DEFAULT_CONTROL_PORT
+import io.github.cococraft.puckradiosync.shared.HRS_MAX_VOLUME_PERCENT
 import io.github.cococraft.puckradiosync.shared.PlaybackStatus
 import io.github.cococraft.puckradiosync.shared.RadioState
 import io.github.cococraft.puckradiosync.shared.RadioStations
@@ -162,7 +163,7 @@ class RadioPlaybackService : Service() {
                         .setUsage(C.USAGE_MEDIA)
                         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
                         .build(),
-                    true,
+                    false,
                 )
                 addListener(object : Player.Listener {
                     override fun onPlaybackStateChanged(playbackState: Int) {
@@ -201,7 +202,7 @@ class RadioPlaybackService : Service() {
     }
 
     private fun applyVolume() {
-        val percent = state.volumePercent.coerceIn(0, 300)
+        val percent = state.volumePercent.coerceIn(0, HRS_MAX_VOLUME_PERCENT)
         val playerVolume = (percent.coerceAtMost(100) / 100f)
         val gain = if (percent <= 100) 1.0 else percent / 100.0
         delayProcessor.setGain(gain)

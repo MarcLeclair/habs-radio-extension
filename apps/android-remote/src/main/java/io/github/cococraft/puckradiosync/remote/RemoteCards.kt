@@ -170,7 +170,7 @@ fun SyncCard(
             verticalAlignment = Alignment.Bottom,
         ) {
             HrsMetric("Delay", "${delaySeconds}s")
-            HrsMetric("Buffer", "${availableBufferSeconds}/60s")
+            HrsMetric("Ready", "${availableBufferSeconds}/60s")
         }
         Spacer(Modifier.height(12.dp))
         HrsBufferDelayBar(
@@ -215,6 +215,8 @@ fun VolumeCard(volumePercent: Int, onCommand: (String) -> Unit) {
                 "100%" to RemotePaths.volume(100),
                 "150%" to RemotePaths.volume(150),
                 "200%" to RemotePaths.volume(200),
+                "300%" to RemotePaths.volume(300),
+                "400%" to RemotePaths.volume(400),
             ),
             onCommand = onCommand,
         )

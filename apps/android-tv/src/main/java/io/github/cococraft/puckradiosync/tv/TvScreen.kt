@@ -222,7 +222,7 @@ private fun StatusPanel(statusBody: String, diagnosticsEnabled: Boolean) {
                         append("\nDelay ")
                         append(status.delaySeconds.roundToInt())
                         append("s")
-                        append("\nBuffer: ")
+                        append("\nDelay ready: ")
                         append(status.delayAvailableSeconds.roundToInt())
                         append("/60s")
                         if (status.delaySeconds > status.delayAvailableSeconds + 0.05) append(" loading")

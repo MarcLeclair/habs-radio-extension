@@ -164,7 +164,7 @@ class DelayAudioProcessor : BaseAudioProcessor() {
         const val TAG = "HRSDelayProcessor"
         const val BYTES_PER_SAMPLE_16_BIT = 2
         const val MAX_DELAY_SECONDS = 60.0
-        const val MAX_GAIN = 3.0
+        const val MAX_GAIN = 4.0
     }
 }
 

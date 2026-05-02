@@ -8,6 +8,42 @@ Android TV playback host for the radio stream. The app starts a foreground playb
 ./gradlew :apps:android-tv:assembleDebug
 ```
 
+For Google Play, build and upload the signed Android App Bundle:
+
+```bash
+./gradlew :apps:android-tv:bundleRelease
+```
+
+Output:
+
+```text
+apps/android-tv/build/outputs/bundle/release/android-tv-release.aab
+```
+
+AAB files are for Google Play. GitHub Releases for sideloading should provide an APK download.
+
+## Sideload Install
+
+Download the latest TV APK from the [latest GitHub release](https://github.com/MarcLeclair/habs-radio-extension/releases/latest).
+
+### Downloader app
+
+1. Open the TV Play Store and install Downloader.
+2. On the TV, enable unknown app installs for Downloader:
+   `Settings > Apps > Security & Restrictions > Install unknown apps`.
+3. Open Downloader and enter the latest release URL:
+   `https://github.com/MarcLeclair/habs-radio-extension/releases/latest`.
+4. Download and install the APK.
+
+### ADB
+
+Enable developer options and network debugging on the TV, then run:
+
+```bash
+adb connect TV_IP:5555
+adb install -r puck-radio-sync-tv.apk
+```
+
 ## Local Control API
 
 The TV app listens on port `8787` while its playback service is running.
@@ -30,7 +66,7 @@ All successful endpoints return the current playback state as JSON. Unknown path
 | `GET /reload` | Reload the current stream. |
 | `GET /delay?seconds=20` | Set sync delay in seconds. Values are clamped to `0..60`. |
 | `GET /nudge?seconds=1` | Add or subtract sync delay seconds. Example: `/nudge?seconds=-1`. |
-| `GET /volume?percent=100` | Set volume percent. Values are clamped to `0..300`. |
+| `GET /volume?percent=100` | Set volume percent. Values are clamped to `0..400`. |
 | `GET /volumeNudge?percent=10` | Add or subtract volume percent. Example: `/volumeNudge?percent=-10`. |
 | `GET /station?id=chmp` | Select a station by id. Currently `chmp` is the only station. |
 
